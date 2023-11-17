@@ -16,7 +16,10 @@ export const getExpenses = async (_req: Request, res: Response) => {
          })
          await AppDataSource.initialize()
          .then(async (connection: any) => {
-            const expenses = await connection.getRepository(Expense).find();
+            const expenses = await connection.getRepository(Expense).createQueryBuilder()
+            .select('*')
+            .orderBy('id')
+            .execute()
             res.json(expenses)
          })
 };
