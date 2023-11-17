@@ -9,11 +9,10 @@ const connection = new Connection()
 
 const app = express();
 const PORT = 3000;
-
-app.use(bodyParser.json());
 app.use(cors({
    origin: 'http://localhost:4200'
 }))
+app.use(bodyParser.json());
 app.use('/', expenseRoutes);
 
 connection.connection()
