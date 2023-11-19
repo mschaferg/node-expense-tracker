@@ -10,7 +10,7 @@ const connection = new Connection()
 const app = express();
 const PORT = 3000;
 app.use(cors({
-   origin: 'http://localhost:4200'
+   origin: 'https://mschaferg.github.io/angular-expense-tracker/'
 }))
 app.use(bodyParser.json());
 app.use('/', expenseRoutes);
@@ -18,7 +18,7 @@ app.use('/', expenseRoutes);
 connection.connection()
    .then(() => {
       app.listen(PORT, () => {
-         console.log(`Server is running on http://localhost:${PORT}`);
+         console.log(`Server is running on http://node-expense-tracker-production.up.railway.app`);
       });
    })
    .catch((error) => console.log('TypeORM connection error: ', error));
