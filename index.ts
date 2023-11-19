@@ -8,16 +8,17 @@ import cors from 'cors';
 const connection = new Connection()
 
 const app = express();
-const PORT = 3000;
+const port = process.env.PORT || 3000;
 app.use(cors({
    origin: 'https://mschaferg.github.io/angular-expense-tracker/'
+   // origin: 'http://localhost:4200'
 }))
 app.use(bodyParser.json());
 app.use('/', expenseRoutes);
 
 connection.connection()
    .then(() => {
-      app.listen(PORT, () => {
+      app.listen(port, () => {
          console.log(`Server is running on https://node-expense-tracker-production.up.railway.app`);
       });
    })
