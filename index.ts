@@ -10,7 +10,7 @@ const connection = new Connection()
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(cors({
-   origin: 'https://mschaferg.github.io/angular-expense-tracker/'
+   origin: 'https://mschaferg.github.io'
    // origin: 'http://localhost:4200'
 }))
 app.use(bodyParser.json());
