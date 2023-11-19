@@ -18,7 +18,7 @@ app.use('/', expenseRoutes);
 connection.connection()
    .then(() => {
       app.listen(PORT, () => {
-         console.log(`Server is running on https://node-expense-tracker-production.up.railway.app`);
+         console.log(`Server is running on http://node-expense-tracker-production.up.railway.app`);
       });
    })
    .catch((error) => console.log('TypeORM connection error: ', error));
