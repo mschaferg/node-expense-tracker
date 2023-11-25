@@ -245,12 +245,28 @@ export const addNewUser = async (req: Request, res: Response) => {
          })
          await AppDataSource.initialize()
          .then(async connection => {
-            try {
-               await connection.getRepository(Users).save(user);
-               res.json(user);
-            } catch (error) {
-               console.error(error);
-               res.status(500).json({ message: 'Internal Server Error' });
+            let userList = await connection.getRepository(Users).createQueryBuilder()
+            .select('*')
+            .orderBy('id')
+            .execute()
+
+            let existingUsers = userList.map((item: {id: Number, username: String, password: String}) => {
+               return item.username
+            })
+
+            if (existingUsers.includes(user.username)) {
+               res.json({
+                  statuscode: 400,
+                  message: 'This username already exists!'
+               })
+            } else {
+               try {
+                  await connection.getRepository(Users).save(user);
+                  res.json(user);
+               } catch (error) {
+                  console.error(error);
+                  res.status(500).json({ message: 'Internal Server Error' });
+               }
             }
          })
       resolve({
