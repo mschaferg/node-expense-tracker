@@ -77,7 +77,6 @@ export const updateExpense = async (req: Request, res: Response) => {
    expense.amount = amount;
    expense.date = date;
    expense.id = id
-   expense.updated_at = new Date();
 
    const AppDataSource = new DataSource({
       // type: "postgres",
@@ -131,7 +130,6 @@ export const addExpense = async (req: Request, res: Response) => {
       expense.amount = amount;
       expense.date = date;
       expense.user_id = user_id;
-      expense.created_at = new Date();
 
       const AppDataSource = new DataSource({
          // type: "postgres",
@@ -224,7 +222,6 @@ export const addNewUser = async (req: Request, res: Response) => {
       const user = new Users();
       user.username = username;
       user.password = password;
-      user.created_at = new Date();
 
       const AppDataSource = new DataSource({
          // type: "postgres",
