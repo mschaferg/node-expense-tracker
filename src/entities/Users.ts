@@ -10,4 +10,7 @@ export class Users {
 
    @Column()
    password!: string;
+
+   @Column()
+   created_at!: Date;
 }
