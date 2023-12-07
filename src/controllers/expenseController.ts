@@ -4,6 +4,12 @@ import { Expense } from '../entities/Expense';
 import { Users } from '../entities/Users';
 
 export const getExpenses = async (req: Request, res: Response) => {
+   const rateInfo = await fetch('https://api.freecurrencyapi.com/v1/currencies?apikey=fca_live_ARKctDBRRx4BA09pNqYYBMQ7RwVaMeoDmTdTeud2')
+      .then(response => response.json())
+
+   const rate = await fetch(`https://api.freecurrencyapi.com/v1/latest?apikey=fca_live_ARKctDBRRx4BA09pNqYYBMQ7RwVaMeoDmTdTeud2&base_currency=${req.body.base}`)
+      .then(response => response.json())
+
       const AppDataSource = new DataSource({
          // type: "postgres",
          // host: "localhost",
@@ -31,7 +37,11 @@ export const getExpenses = async (req: Request, res: Response) => {
             .where('user_id = :user_id', {user_id: req.body.user_id})
             .orderBy('id')
             .execute()
-            res.json(expenses)
+            res.json({
+               expenses: expenses,
+               rateInfo: rateInfo,
+               rate: rate
+            })
          })
 };
 
@@ -306,10 +316,6 @@ export const login = async (req: Request, res: Response) => {
          .orderBy('id')
          .execute()
 
-         // let user = users.map((item: {id: number, username: string, password: string}) => {
-         //    return {username: item.username, password: item.password}
-         // })
-
          users.forEach((el: Users)=> {
             if (el.username == req.body.username && el.password == req.body.password) {
                userCheck = true;
@@ -329,18 +335,5 @@ export const login = async (req: Request, res: Response) => {
                result: false
             })
          }
-
-         // userCheck.forEach((el: any)=> {
-         //    if (el.value == true) {
-         //        return res.json({
-         //          result: true,
-         //          id: el.id
-         //       })
-         //    } else {
-         //       return res.json({
-         //          result: false
-         //       })
-         //    }
-         // })
       })
 };
