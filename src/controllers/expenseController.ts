@@ -36,10 +36,7 @@ export const exportCsv = async (req: Request, res: Response) => {
             .execute()
 
             await writer.writeRecords(expenses).then(() => {
-               res.setHeader('Content-Type', 'text/csv');
-               res.setHeader('Content-Disposition', 'attachment; filename=expenses.csv');
-               res.setHeader('Access-Control-Allow-Origin', 'https://mschaferg.github.io')
-               res.send('expenses.csv')
+               res.download('expenses.csv')
                console.log('CSV file written successfully!');
              });
          })
