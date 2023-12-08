@@ -2,6 +2,51 @@ import { Request, Response } from 'express';
 import { DataSource  } from 'typeorm';
 import { Expense } from '../entities/Expense';
 import { Users } from '../entities/Users';
+import * as path from 'path';
+const csvWriter = require('csv-writer');
+const homedir = require('os').homedir();
+
+export const exportCsv = async (req: Request, res: Response) => {
+   console.log(homedir)
+   const writer = csvWriter.createObjectCsvWriter({
+      path: path.resolve(`${homedir}/Desktop`, 'expenses.csv'),
+      header: [
+        { id: 'date', title: 'Date' },
+        { id: 'description', title: 'Description' },
+        { id: 'amount', title: 'Amount' },
+      ],
+    });
+
+      const AppDataSource = new DataSource({
+         type: "postgres",
+         host: "roundhouse.proxy.rlwy.net",
+         port: 21769,
+         username: "postgres",
+         password: "G13dd1fBf-bebb4Fd-1B*-GFf4aBCa2g",
+         database: "railway",
+         entities: [Expense, Users],
+         synchronize: true,
+         logging: false,
+         })
+         await AppDataSource.initialize()
+         .then(async (connection: any) => {
+            const expenses = await connection.getRepository(Expense).createQueryBuilder()
+            .select('*')
+            .where('user_id = :user_id', {user_id: req.body.user_id})
+            .orderBy('id')
+            .execute()
+
+            await writer.writeRecords(expenses).then(() => {
+               res.setHeader('Content-Type', 'text/csv');
+               res.setHeader('Content-Disposition', 'attachment; filename=expenses.csv')
+               res.send('expenses.csv')
+               // res.download(__dirname, 'expenses.csv', err => {
+               //    console.log(err)
+               // })
+               console.log('CSV file written successfully!');
+             });
+         })
+}
 
 export const getExpenses = async (req: Request, res: Response) => {
    const rateInfo = await fetch('https://api.freecurrencyapi.com/v1/currencies?apikey=fca_live_ARKctDBRRx4BA09pNqYYBMQ7RwVaMeoDmTdTeud2')

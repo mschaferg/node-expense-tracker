@@ -6,7 +6,8 @@ import {
     getExpenseById,
     updateExpense,
     addNewUser,
-    login } from '../controllers/expenseController';
+    login, 
+    exportCsv} from '../controllers/expenseController';
 
 const router = Router();
 
@@ -17,5 +18,6 @@ router.post('/expenseById', getExpenseById);
 router.post('/update', updateExpense);
 router.post('/createUser', addNewUser);
 router.post('/users', login);
+router.post('/exportCsv', exportCsv)
 
 export default router;
