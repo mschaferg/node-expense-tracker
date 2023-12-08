@@ -4,11 +4,11 @@ import { Expense } from '../entities/Expense';
 import { Users } from '../entities/Users';
 import * as path from 'path';
 const csvWriter = require('csv-writer');
-const homedir = require('os').homedir();
+// const homedir = require('os').homedir();
 
 export const exportCsv = async (req: Request, res: Response) => {
    const writer = csvWriter.createObjectCsvWriter({
-      path: path.resolve(`${homedir}/Desktop`, 'expenses.csv'),
+      path: path.resolve(__dirname, 'expenses.csv'),
       header: [
         { id: 'date', title: 'Date' },
         { id: 'description', title: 'Description' },
@@ -36,7 +36,10 @@ export const exportCsv = async (req: Request, res: Response) => {
             .execute()
 
             await writer.writeRecords(expenses).then(() => {
-               res.download('expenses.csv')
+               res.setHeader('Content-Type', 'text/csv');
+               res.setHeader('Content-Disposition', 'attachment; filename=expenses.csv');
+               res.setHeader('Access-Control-Allow-Origin', 'https://mschaferg.github.io')
+               res.send('expenses.csv')
                console.log('CSV file written successfully!');
              });
          })
