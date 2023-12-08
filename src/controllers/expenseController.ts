@@ -7,7 +7,6 @@ const csvWriter = require('csv-writer');
 const homedir = require('os').homedir();
 
 export const exportCsv = async (req: Request, res: Response) => {
-   console.log(homedir)
    const writer = csvWriter.createObjectCsvWriter({
       path: path.resolve(`${homedir}/Desktop`, 'expenses.csv'),
       header: [
@@ -40,9 +39,6 @@ export const exportCsv = async (req: Request, res: Response) => {
                res.setHeader('Content-Type', 'text/csv');
                res.setHeader('Content-Disposition', 'attachment; filename=expenses.csv')
                res.send('expenses.csv')
-               // res.download(__dirname, 'expenses.csv', err => {
-               //    console.log(err)
-               // })
                console.log('CSV file written successfully!');
              });
          })
