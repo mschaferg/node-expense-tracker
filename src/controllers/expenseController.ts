@@ -6,7 +6,6 @@ import { Connection } from '../Connection'
 import * as path from 'path';
 const csvWriter = require('csv-writer');
 
-const apiKey = 'fca_live_ARKctDBRRx4BA09pNqYYBMQ7RwVaMeoDmTdTeud2'
 const connection = new Connection();
 
 export const exportCsv = async (req: Request, res: Response) => {
@@ -38,10 +37,10 @@ export const exportCsv = async (req: Request, res: Response) => {
 }
 
 export const getExpenses = async (req: Request, res: Response) => {
-   const rateInfo = await fetch(`https://api.freecurrencyapi.com/v1/currencies?apikey=${apiKey}`)
+   const rateInfo = await fetch(`https://api.freecurrencyapi.com/v1/currencies?apikey=${process.env.API_KEY}`)
       .then(response => response.json())
 
-   const rate = await fetch(`https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}&base_currency=${req.body.base}`)
+   const rate = await fetch(`https://api.freecurrencyapi.com/v1/latest?apikey=${process.env.API_KEY}&base_currency=${req.body.base}`)
       .then(response => response.json())
 
       connection.connection()
