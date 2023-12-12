@@ -2,9 +2,13 @@ import { Request, Response } from 'express';
 import { DataSource  } from 'typeorm';
 import { Expense } from '../entities/Expense';
 import { Users } from '../entities/Users';
+import { Connection } from '../Connection'
 import * as path from 'path';
+import APIKey from '../../apikey';
 const csvWriter = require('csv-writer');
-// const homedir = require('os').homedir();
+
+const apiKey = new APIKey().apiKey
+const connection = new Connection();
 
 export const exportCsv = async (req: Request, res: Response) => {
    const writer = csvWriter.createObjectCsvWriter({
@@ -16,18 +20,7 @@ export const exportCsv = async (req: Request, res: Response) => {
       ],
     });
 
-      const AppDataSource = new DataSource({
-         type: "postgres",
-         host: "roundhouse.proxy.rlwy.net",
-         port: 21769,
-         username: "postgres",
-         password: "G13dd1fBf-bebb4Fd-1B*-GFf4aBCa2g",
-         database: "railway",
-         entities: [Expense, Users],
-         synchronize: true,
-         logging: false,
-         })
-         await AppDataSource.initialize()
+      connection.connection()
          .then(async (connection: any) => {
             const expenses = await connection.getRepository(Expense).createQueryBuilder()
             .select('*')
@@ -46,33 +39,13 @@ export const exportCsv = async (req: Request, res: Response) => {
 }
 
 export const getExpenses = async (req: Request, res: Response) => {
-   const rateInfo = await fetch('https://api.freecurrencyapi.com/v1/currencies?apikey=fca_live_ARKctDBRRx4BA09pNqYYBMQ7RwVaMeoDmTdTeud2')
+   const rateInfo = await fetch(`https://api.freecurrencyapi.com/v1/currencies?apikey=${apiKey}`)
       .then(response => response.json())
 
-   const rate = await fetch(`https://api.freecurrencyapi.com/v1/latest?apikey=fca_live_ARKctDBRRx4BA09pNqYYBMQ7RwVaMeoDmTdTeud2&base_currency=${req.body.base}`)
+   const rate = await fetch(`https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}&base_currency=${req.body.base}`)
       .then(response => response.json())
 
-      const AppDataSource = new DataSource({
-         // type: "postgres",
-         // host: "localhost",
-         // port: 5432,
-         // username: "expense_tracker",
-         // password: "expense-tracker",
-         // database: "expense_tracker",
-         // entities: [Expense, Users],
-         // synchronize: true,
-         // logging: false,
-         type: "postgres",
-         host: "roundhouse.proxy.rlwy.net",
-         port: 21769,
-         username: "postgres",
-         password: "G13dd1fBf-bebb4Fd-1B*-GFf4aBCa2g",
-         database: "railway",
-         entities: [Expense, Users],
-         synchronize: true,
-         logging: false,
-         })
-         await AppDataSource.initialize()
+      connection.connection()
          .then(async (connection: any) => {
             const expenses = await connection.getRepository(Expense).createQueryBuilder()
             .select('*')
@@ -88,27 +61,7 @@ export const getExpenses = async (req: Request, res: Response) => {
 };
 
 export const getExpenseById = async (req: Request, res: Response) => {
-   const AppDataSource = new DataSource({
-      // type: "postgres",
-      // host: "localhost",
-      // port: 5432,
-      // username: "expense_tracker",
-      // password: "expense-tracker",
-      // database: "expense_tracker",
-      // entities: [Expense, Users],
-      // synchronize: true,
-      // logging: false,
-      type: "postgres",
-      host: "roundhouse.proxy.rlwy.net",
-      port: 21769,
-      username: "postgres",
-      password: "G13dd1fBf-bebb4Fd-1B*-GFf4aBCa2g",
-      database: "railway",
-      entities: [Expense, Users],
-      synchronize: true,
-      logging: false,
-      })
-      await AppDataSource.initialize()
+   connection.connection()
       .then(async (connection: any) => {
          const expense = await connection.getRepository(Expense).findOneBy({
             id: req.body.id
@@ -130,28 +83,8 @@ export const updateExpense = async (req: Request, res: Response) => {
    expense.date = date;
    expense.id = id
 
-   const AppDataSource = new DataSource({
-      // type: "postgres",
-      // host: "localhost",
-      // port: 5432,
-      // username: "expense_tracker",
-      // password: "expense-tracker",
-      // database: "expense_tracker",
-      // entities: [Expense, Users],
-      // synchronize: true,
-      // logging: false,
-      type: "postgres",
-      host: "roundhouse.proxy.rlwy.net",
-      port: 21769,
-      username: "postgres",
-      password: "G13dd1fBf-bebb4Fd-1B*-GFf4aBCa2g",
-      database: "railway",
-      entities: [Expense, Users],
-      synchronize: true,
-      logging: false,
-      })
-      await AppDataSource.initialize()
-      .then(async connection => {
+   connection.connection()
+      .then(async (connection: any) => {
          try {
             await connection.getRepository(Expense).createQueryBuilder()
             .update(Expense)
@@ -183,28 +116,8 @@ export const addExpense = async (req: Request, res: Response) => {
       expense.date = date;
       expense.user_id = user_id;
 
-      const AppDataSource = new DataSource({
-         // type: "postgres",
-         // host: "localhost",
-         // port: 5432,
-         // username: "expense_tracker",
-         // password: "expense-tracker",
-         // database: "expense_tracker",
-         // entities: [Expense, Users],
-         // synchronize: true,
-         // logging: false,
-         type: "postgres",
-         host: "roundhouse.proxy.rlwy.net",
-         port: 21769,
-         username: "postgres",
-         password: "G13dd1fBf-bebb4Fd-1B*-GFf4aBCa2g",
-         database: "railway",
-         entities: [Expense, Users],
-         synchronize: true,
-         logging: false,
-         })
-         await AppDataSource.initialize()
-         .then(async connection => {
+      connection.connection()
+         .then(async (connection: any) => {
             try {
                await connection.getRepository(Expense).save(expense);
                res.json(expense);
@@ -232,27 +145,7 @@ export const deleteExpense = async (req: Request, res: Response) => {
    expense.date = date;
    expense.id = id;
 
-   const AppDataSource = new DataSource({
-      // type: "postgres",
-      // host: "localhost",
-      // port: 5432,
-      // username: "expense_tracker",
-      // password: "expense-tracker",
-      // database: "expense_tracker",
-      // entities: [Expense, Users],
-      // synchronize: true,
-      // logging: false,
-      type: "postgres",
-      host: "roundhouse.proxy.rlwy.net",
-      port: 21769,
-      username: "postgres",
-      password: "G13dd1fBf-bebb4Fd-1B*-GFf4aBCa2g",
-      database: "railway",
-      entities: [Expense, Users],
-      synchronize: true,
-      logging: false,
-      })
-      await AppDataSource.initialize()
+   connection.connection()
       .then(async (connection: any) => {
          const expenses = await connection.createQueryBuilder()
          .delete()
@@ -275,28 +168,8 @@ export const addNewUser = async (req: Request, res: Response) => {
       user.username = username;
       user.password = password;
 
-      const AppDataSource = new DataSource({
-         // type: "postgres",
-         // host: "localhost",
-         // port: 5432,
-         // username: "expense_tracker",
-         // password: "expense-tracker",
-         // database: "expense_tracker",
-         // entities: [Expense, Users],
-         // synchronize: true,
-         // logging: false,
-         type: "postgres",
-         host: "roundhouse.proxy.rlwy.net",
-         port: 21769,
-         username: "postgres",
-         password: "G13dd1fBf-bebb4Fd-1B*-GFf4aBCa2g",
-         database: "railway",
-         entities: [Expense, Users],
-         synchronize: true,
-         logging: false,
-         })
-         await AppDataSource.initialize()
-         .then(async connection => {
+      connection.connection()
+         .then(async (connection: any) => {
             let userList = await connection.getRepository(Users).createQueryBuilder()
             .select('*')
             .orderBy('id')
@@ -331,27 +204,7 @@ export const login = async (req: Request, res: Response) => {
    let userCheck: any;
    let userId: number;
 
-   const AppDataSource = new DataSource({
-      // type: "postgres",
-      // host: "localhost",
-      // port: 5432,
-      // username: "expense_tracker",
-      // password: "expense-tracker",
-      // database: "expense_tracker",
-      // entities: [Expense, Users],
-      // synchronize: true,
-      // logging: false,
-      type: "postgres",
-      host: "roundhouse.proxy.rlwy.net",
-      port: 21769,
-      username: "postgres",
-      password: "G13dd1fBf-bebb4Fd-1B*-GFf4aBCa2g",
-      database: "railway",
-      entities: [Expense, Users],
-      synchronize: true,
-      logging: false,
-      })
-      await AppDataSource.initialize()
+   connection.connection()
       .then(async (connection: any) => {
          const users = await connection.getRepository(Users).createQueryBuilder()
          .select('*')
