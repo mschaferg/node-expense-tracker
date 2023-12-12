@@ -4,10 +4,9 @@ import { Expense } from '../entities/Expense';
 import { Users } from '../entities/Users';
 import { Connection } from '../Connection'
 import * as path from 'path';
-import APIKey from '../../apikey';
 const csvWriter = require('csv-writer');
 
-const apiKey = new APIKey().apiKey
+const apiKey = 'fca_live_ARKctDBRRx4BA09pNqYYBMQ7RwVaMeoDmTdTeud2'
 const connection = new Connection();
 
 export const exportCsv = async (req: Request, res: Response) => {
